@@ -4,7 +4,54 @@ import FileUpload from '../components/FileUpload';
 import StatsPanel from '../components/StatsPanel';
 import DataVisualizer from '../components/DataVisualizer';
 import AnalysisControls from '../components/AnalysisControls';
-import musicAnimation from '../assets/music-animation.json';
+
+// Import a simple loading animation
+const loadingAnimation = {
+  v: "5.5.7",
+  fr: 29.9700012207031,
+  ip: 0,
+  op: 60.0000024438501,
+  w: 512,
+  h: 512,
+  nm: "Loading Animation",
+  ddd: 0,
+  assets: [],
+  layers: [
+    {
+      ddd: 0,
+      ind: 1,
+      ty: 4,
+      nm: "Shape Layer",
+      sr: 1,
+      ks: {
+        o: { a: 0, k: 100 },
+        r: { a: 0, k: 0 },
+        p: { a: 0, k: [256, 256, 0] },
+        a: { a: 0, k: [0, 0, 0] },
+        s: { a: 0, k: [100, 100, 100] }
+      },
+      shapes: [
+        {
+          ty: "gr",
+          it: [
+            {
+              ty: "rc",
+              d: 1,
+              s: { a: 0, k: [100, 100] },
+              p: { a: 0, k: [0, 0] },
+              r: { a: 0, k: 20 }
+            },
+            {
+              ty: "fl",
+              c: { a: 0, k: [0.62, 0.93, 0.84, 1] },
+              o: { a: 0, k: 100 }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+};
 
 interface SpotifyData {
   ts: string;
@@ -101,7 +148,7 @@ const Index = () => {
       totalMinutes,
       topArtists,
       topTracks,
-      chartData: chartData || [],
+      chartData: chartData || []
     });
   };
 
@@ -115,7 +162,7 @@ const Index = () => {
         <div className="space-y-8">
           <FileUpload onFileUpload={processData} />
           <div className="w-64 mx-auto">
-            <Lottie animationData={musicAnimation} loop={true} />
+            <Lottie animationData={loadingAnimation} loop={true} />
           </div>
         </div>
       ) : (

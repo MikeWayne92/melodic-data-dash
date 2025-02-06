@@ -3,12 +3,33 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, L
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 
+interface DataPoint {
+  name: string;
+  value: number;
+}
+
 interface DataVisualizerProps {
-  data: any[];
+  data: DataPoint[];
 }
 
 const DataVisualizer = ({ data }: DataVisualizerProps) => {
   const [chartType, setChartType] = useState<'bar' | 'line'>('bar');
+
+  // Early return with message if no data
+  if (!data || data.length === 0) {
+    return (
+      <div className="neomorph p-6">
+        <h3 className="text-lg font-semibold mb-4">Data Visualization</h3>
+        <p className="text-gray-600 text-center">No data available to visualize</p>
+      </div>
+    );
+  }
+
+  // Format data to ensure all required properties
+  const formattedData = data.map(item => ({
+    name: String(item.name || 'Unnamed'),
+    value: Number(item.value || 0)
+  }));
 
   return (
     <div className="neomorph p-6 space-y-4">
@@ -30,22 +51,31 @@ const DataVisualizer = ({ data }: DataVisualizerProps) => {
         </RadioGroup>
       </div>
       
-      <div className="h-[400px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div className="h-[400px] w-full">
+        <ResponsiveContainer>
           {chartType === 'bar' ? (
-            <BarChart data={data}>
-              <XAxis dataKey="name" />
+            <BarChart data={formattedData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <XAxis 
+                dataKey="name"
+                height={60}
+                tick={{ angle: -45, textAnchor: 'end' }}
+              />
               <YAxis />
               <Tooltip />
               <Bar
                 dataKey="value"
                 fill="#9FEDD7"
+                radius={[4, 4, 0, 0]}
                 className="hover:opacity-80 transition-opacity"
               />
             </BarChart>
           ) : (
-            <LineChart data={data}>
-              <XAxis dataKey="name" />
+            <LineChart data={formattedData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+              <XAxis 
+                dataKey="name"
+                height={60}
+                tick={{ angle: -45, textAnchor: 'end' }}
+              />
               <YAxis />
               <Tooltip />
               <Line
