@@ -31,6 +31,24 @@ const DataVisualizer = ({ data }: DataVisualizerProps) => {
     value: Number(item.value || 0)
   }));
 
+  const CustomizedAxisTick = (props: any) => {
+    const { x, y, payload } = props;
+    return (
+      <g transform={`translate(${x},${y})`}>
+        <text
+          x={0}
+          y={0}
+          dy={16}
+          textAnchor="end"
+          fill="#666"
+          transform="rotate(-45)"
+        >
+          {payload.value}
+        </text>
+      </g>
+    );
+  };
+
   return (
     <div className="neomorph p-6 space-y-4">
       <div className="flex justify-between items-center mb-4">
@@ -58,7 +76,7 @@ const DataVisualizer = ({ data }: DataVisualizerProps) => {
               <XAxis 
                 dataKey="name"
                 height={60}
-                tick={{ angle: -45, textAnchor: 'end' }}
+                tick={<CustomizedAxisTick />}
               />
               <YAxis />
               <Tooltip />
@@ -74,7 +92,7 @@ const DataVisualizer = ({ data }: DataVisualizerProps) => {
               <XAxis 
                 dataKey="name"
                 height={60}
-                tick={{ angle: -45, textAnchor: 'end' }}
+                tick={<CustomizedAxisTick />}
               />
               <YAxis />
               <Tooltip />
