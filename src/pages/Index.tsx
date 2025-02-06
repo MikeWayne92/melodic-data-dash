@@ -6,13 +6,27 @@ import DataVisualizer from '../components/DataVisualizer';
 import AnalysisControls from '../components/AnalysisControls';
 import musicAnimation from '../assets/music-animation.json';
 
+interface SpotifyData {
+  ts: string;
+  ms_played: number;
+  master_metadata_album_artist_name: string;
+  master_metadata_track_name: string;
+}
+
+interface ProcessedData {
+  totalMinutes: number;
+  topArtists: { name: string; count: number }[];
+  topTracks: { name: string; count: number }[];
+  chartData: { name: string; value: number }[];
+}
+
 const Index = () => {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ProcessedData | null>(null);
   const [timeRange, setTimeRange] = useState(30);
   const [displayMode, setDisplayMode] = useState<'artists' | 'tracks' | 'time'>('artists');
   const [minPlayCount, setMinPlayCount] = useState(5);
 
-  const processData = (jsonData: any[]) => {
+  const processData = (jsonData: SpotifyData[]) => {
     // Filter data based on time range (convert ms to days)
     const now = new Date();
     const filteredData = jsonData.filter(item => {
@@ -26,7 +40,7 @@ const Index = () => {
     const totalMinutes = filteredData.reduce((acc, curr) => acc + (curr.ms_played / 60000), 0);
     
     // Aggregate artists with minimum play count filter
-    const artistCounts = filteredData.reduce((acc: any, curr) => {
+    const artistCounts = filteredData.reduce((acc: Record<string, number>, curr) => {
       const artist = curr.master_metadata_album_artist_name;
       if (artist) {
         acc[artist] = (acc[artist] || 0) + 1;
@@ -35,7 +49,7 @@ const Index = () => {
     }, {});
 
     // Aggregate tracks with minimum play count filter
-    const trackCounts = filteredData.reduce((acc: any, curr) => {
+    const trackCounts = filteredData.reduce((acc: Record<string, number>, curr) => {
       const track = curr.master_metadata_track_name;
       if (track) {
         acc[track] = (acc[track] || 0) + 1;
@@ -47,12 +61,12 @@ const Index = () => {
     const topArtists = Object.entries(artistCounts)
       .map(([name, count]) => ({ name, count }))
       .filter(item => item.count >= minPlayCount)
-      .sort((a: any, b: any) => b.count - a.count);
+      .sort((a, b) => b.count - a.count);
 
     const topTracks = Object.entries(trackCounts)
       .map(([name, count]) => ({ name, count }))
       .filter(item => item.count >= minPlayCount)
-      .sort((a: any, b: any) => b.count - a.count);
+      .sort((a, b) => b.count - a.count);
 
     // Prepare chart data based on display mode
     let chartData;
@@ -71,14 +85,14 @@ const Index = () => {
         break;
       case 'time':
         // Group by days for time-based visualization
-        const timeData = filteredData.reduce((acc: any, curr) => {
+        const timeData = filteredData.reduce((acc: Record<string, number>, curr) => {
           const date = new Date(curr.ts).toLocaleDateString();
           acc[date] = (acc[date] || 0) + (curr.ms_played / 60000);
           return acc;
         }, {});
         chartData = Object.entries(timeData).map(([date, minutes]) => ({
           name: date,
-          value: Math.round(minutes as number),
+          value: Math.round(minutes),
         }));
         break;
     }
@@ -87,7 +101,7 @@ const Index = () => {
       totalMinutes,
       topArtists,
       topTracks,
-      chartData,
+      chartData: chartData || [],
     });
   };
 
