@@ -1,4 +1,5 @@
 Spotify Listening Analysis Dashboard
+
 A web application that allows users to visualize and analyze their Spotify listening history through an elegant neomorphic interface.
 
 Features
@@ -40,22 +41,24 @@ npm run dev
 Technologies Used
 
 Frontend Framework: React with TypeScript
-Styling:
-Tailwind CSS
-Neomorphic design system
+Styling: Tailwind CSS, Neomorphic design system
 Build Tool: Vite
 UI Components: shadcn-ui
 Visualization: Canvas-based music visualizer
 Music Integration: Spotify Web Playback SDK
+
+
 How to Use
 
 Upload Data:
 Export your Spotify listening history from your Spotify account
 Drag and drop the JSON file into the upload zone
+
 View Statistics:
 See your total listening time
 Browse your top artists and tracks
 Click on tracks to play them in the embedded player
+
 Customize Analysis:
 Adjust the time range slider
 Set minimum play count
