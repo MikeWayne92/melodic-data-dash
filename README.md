@@ -1,69 +1,83 @@
-# Welcome to your Lovable project
+Spotify Listening Analysis Dashboard
+A web application that allows users to visualize and analyze their Spotify listening history through an elegant neomorphic interface.
 
-## Project info
+Features
 
-**URL**: https://lovable.dev/projects/f3e7aefd-f287-4e98-bd0c-c53ad82d07ee
+Data Upload: Upload your Spotify streaming history JSON file
+Interactive Statistics:
+Total listening time
+Top artists with play counts
+Top tracks with play counts
+Music Player:
+Embedded Spotify player for track previews
+Real-time music visualizer
+Playback controls
+Customizable Analysis:
+Adjustable time range (1-365 days)
+Minimum play count filter
+Multiple display modes (artists/tracks/time)
+Getting Started
 
-## How can I edit this code?
+Prerequisites
 
-There are several ways of editing your application.
+Node.js & npm installed
+Your Spotify listening history data (JSON format)
+Can be requested from Spotify through your account settings
+Installation and Setup
 
-**Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/f3e7aefd-f287-4e98-bd0c-c53ad82d07ee) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Navigate to project directory
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
-```
+Technologies Used
 
-**Edit a file directly in GitHub**
+Frontend Framework: React with TypeScript
+Styling:
+Tailwind CSS
+Neomorphic design system
+Build Tool: Vite
+UI Components: shadcn-ui
+Visualization: Canvas-based music visualizer
+Music Integration: Spotify Web Playback SDK
+How to Use
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+Upload Data:
+Export your Spotify listening history from your Spotify account
+Drag and drop the JSON file into the upload zone
+View Statistics:
+See your total listening time
+Browse your top artists and tracks
+Click on tracks to play them in the embedded player
+Customize Analysis:
+Adjust the time range slider
+Set minimum play count
+Switch between different display modes
+Development
 
-**Use GitHub Codespaces**
+This project was built with Lovable. You can edit it in several ways:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Use the Lovable interface
+Clone and edit locally
+Edit directly on GitHub
+Use GitHub Codespaces
+Deployment
 
-## What technologies are used for this project?
+Deploy your application using one of these methods:
 
-This project is built with .
+Use Lovable's built-in deployment (Share -> Publish)
+Deploy to Netlify for custom domain support
+Custom Domain Setup
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+For custom domain deployment, we recommend using Netlify. See our Custom domains documentation for detailed instructions.
 
-## How can I deploy this project?
+Contributing
 
-Simply open [Lovable](https://lovable.dev/projects/f3e7aefd-f287-4e98-bd0c-c53ad82d07ee) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+Feel free to submit issues and enhancement requests!
