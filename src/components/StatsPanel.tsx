@@ -1,13 +1,15 @@
+
 import React from 'react';
 import { Clock, Music, User } from 'lucide-react';
 
 interface StatsPanelProps {
   totalMinutes: number;
   topArtists: { name: string; count: number }[];
-  topTracks: { name: string; count: number }[];
+  topTracks: { name: string; count: number; trackId?: string }[];
+  onTrackSelect?: (trackId: string) => void;
 }
 
-const StatsPanel = ({ totalMinutes, topArtists, topTracks }: StatsPanelProps) => {
+const StatsPanel = ({ totalMinutes, topArtists, topTracks, onTrackSelect }: StatsPanelProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
       <div className="neomorph p-6">
@@ -42,7 +44,11 @@ const StatsPanel = ({ totalMinutes, topArtists, topTracks }: StatsPanelProps) =>
         </div>
         <ul className="space-y-2">
           {topTracks.slice(0, 3).map((track, index) => (
-            <li key={index} className="flex justify-between">
+            <li 
+              key={index} 
+              className="flex justify-between cursor-pointer hover:bg-neogray-dark p-2 rounded transition-colors"
+              onClick={() => track.trackId && onTrackSelect?.(track.trackId)}
+            >
               <span>{track.name}</span>
               <span className="text-mint-dark">{track.count} plays</span>
             </li>

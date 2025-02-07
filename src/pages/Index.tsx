@@ -1,70 +1,22 @@
+
 import React, { useState } from 'react';
-import Lottie from 'lottie-react';
 import FileUpload from '../components/FileUpload';
 import StatsPanel from '../components/StatsPanel';
-import DataVisualizer from '../components/DataVisualizer';
+import MusicPlayer from '../components/MusicPlayer';
 import AnalysisControls from '../components/AnalysisControls';
-
-// Import a simple loading animation
-const loadingAnimation = {
-  v: "5.5.7",
-  fr: 29.9700012207031,
-  ip: 0,
-  op: 60.0000024438501,
-  w: 512,
-  h: 512,
-  nm: "Loading Animation",
-  ddd: 0,
-  assets: [],
-  layers: [
-    {
-      ddd: 0,
-      ind: 1,
-      ty: 4,
-      nm: "Shape Layer",
-      sr: 1,
-      ks: {
-        o: { a: 0, k: 100 },
-        r: { a: 0, k: 0 },
-        p: { a: 0, k: [256, 256, 0] },
-        a: { a: 0, k: [0, 0, 0] },
-        s: { a: 0, k: [100, 100, 100] }
-      },
-      shapes: [
-        {
-          ty: "gr",
-          it: [
-            {
-              ty: "rc",
-              d: 1,
-              s: { a: 0, k: [100, 100] },
-              p: { a: 0, k: [0, 0] },
-              r: { a: 0, k: 20 }
-            },
-            {
-              ty: "fl",
-              c: { a: 0, k: [0.62, 0.93, 0.84, 1] },
-              o: { a: 0, k: 100 }
-            }
-          ]
-        }
-      ]
-    }
-  ]
-};
 
 interface SpotifyData {
   ts: string;
   ms_played: number;
   master_metadata_album_artist_name: string;
   master_metadata_track_name: string;
+  spotify_track_uri?: string;
 }
 
 interface ProcessedData {
   totalMinutes: number;
   topArtists: { name: string; count: number }[];
-  topTracks: { name: string; count: number }[];
-  chartData: { name: string; value: number }[];
+  topTracks: { name: string; count: number; trackId?: string }[];
 }
 
 const Index = () => {
@@ -72,6 +24,7 @@ const Index = () => {
   const [timeRange, setTimeRange] = useState(30);
   const [displayMode, setDisplayMode] = useState<'artists' | 'tracks' | 'time'>('artists');
   const [minPlayCount, setMinPlayCount] = useState(5);
+  const [selectedTrackId, setSelectedTrackId] = useState<string>();
 
   const processData = (jsonData: SpotifyData[]) => {
     // Filter data based on time range (convert ms to days)
@@ -86,7 +39,7 @@ const Index = () => {
     // Convert ms_played to minutes
     const totalMinutes = filteredData.reduce((acc, curr) => acc + (curr.ms_played / 60000), 0);
     
-    // Aggregate artists with minimum play count filter
+    // Aggregate artists
     const artistCounts = filteredData.reduce((acc: Record<string, number>, curr) => {
       const artist = curr.master_metadata_album_artist_name;
       if (artist) {
@@ -95,11 +48,17 @@ const Index = () => {
       return acc;
     }, {});
 
-    // Aggregate tracks with minimum play count filter
-    const trackCounts = filteredData.reduce((acc: Record<string, number>, curr) => {
+    // Aggregate tracks
+    const trackData = filteredData.reduce((acc: Record<string, { count: number; trackId?: string }>, curr) => {
       const track = curr.master_metadata_track_name;
       if (track) {
-        acc[track] = (acc[track] || 0) + 1;
+        if (!acc[track]) {
+          acc[track] = {
+            count: 0,
+            trackId: curr.spotify_track_uri?.split(':')[2], // Extract track ID from URI
+          };
+        }
+        acc[track].count += 1;
       }
       return acc;
     }, {});
@@ -110,46 +69,25 @@ const Index = () => {
       .filter(item => item.count >= minPlayCount)
       .sort((a, b) => b.count - a.count);
 
-    const topTracks = Object.entries(trackCounts)
-      .map(([name, count]) => ({ name, count }))
+    const topTracks = Object.entries(trackData)
+      .map(([name, data]) => ({ 
+        name, 
+        count: data.count,
+        trackId: data.trackId 
+      }))
       .filter(item => item.count >= minPlayCount)
       .sort((a, b) => b.count - a.count);
-
-    // Prepare chart data based on display mode
-    let chartData;
-    switch (displayMode) {
-      case 'artists':
-        chartData = topArtists.slice(0, 10).map(artist => ({
-          name: artist.name,
-          value: artist.count,
-        }));
-        break;
-      case 'tracks':
-        chartData = topTracks.slice(0, 10).map(track => ({
-          name: track.name,
-          value: track.count,
-        }));
-        break;
-      case 'time':
-        // Group by days for time-based visualization
-        const timeData = filteredData.reduce((acc: Record<string, number>, curr) => {
-          const date = new Date(curr.ts).toLocaleDateString();
-          acc[date] = (acc[date] || 0) + (curr.ms_played / 60000);
-          return acc;
-        }, {});
-        chartData = Object.entries(timeData).map(([date, minutes]) => ({
-          name: date,
-          value: Math.round(minutes),
-        }));
-        break;
-    }
 
     setData({
       totalMinutes,
       topArtists,
       topTracks,
-      chartData: chartData || []
     });
+
+    // Set the first track as selected if available
+    if (topTracks.length > 0 && topTracks[0].trackId) {
+      setSelectedTrackId(topTracks[0].trackId);
+    }
   };
 
   return (
@@ -161,9 +99,7 @@ const Index = () => {
       {!data ? (
         <div className="space-y-8">
           <FileUpload onFileUpload={processData} />
-          <div className="w-64 mx-auto">
-            <Lottie animationData={loadingAnimation} loop={true} />
-          </div>
+          <div className="w-64 mx-auto animate-pulse bg-neogray-dark h-64 rounded-full" />
         </div>
       ) : (
         <div className="space-y-8 animate-fade-in">
@@ -179,8 +115,9 @@ const Index = () => {
             totalMinutes={data.totalMinutes}
             topArtists={data.topArtists}
             topTracks={data.topTracks}
+            onTrackSelect={(trackId) => setSelectedTrackId(trackId)}
           />
-          <DataVisualizer data={data.chartData} />
+          <MusicPlayer trackId={selectedTrackId} />
         </div>
       )}
     </div>
